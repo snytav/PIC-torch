@@ -230,9 +230,9 @@ def PIC(xt,vt, x0t, dht, ef, feat):
 
 if __name__ == '__main__':
    # grid step
-   dh = [0.01, 0.01, 0.01]
+   # dh = [0.01, 0.01, 0.01]
    # coordinate origin
-   x0 = [-0.1, -0.1, 0]
+   # x0 = [-0.1, -0.1, 0]
 
    # importing array of features
    feat_big = np.loadtxt('electrons_a_4.txt')
@@ -244,22 +244,52 @@ if __name__ == '__main__':
    v = feat[:,2,:]
 
    #number of nodes
-   ni = 21
-   nj = 21
-   nk = 21
+   nx = 3
+   ny = 4
+   nz = 5
+
+   u2 = np.zeros((nx + 2, ny + 2, nz + 2))
+   # bounds3D(u2)
+   # sys.exit()
+
+   # f = laplace3D(u2)
+
+   Xminus = u2[0, 1:-1, 1:-1]
+   Xplus = u2[-1, 1:-1, 1:-1]
+   Yminus = u2[1:-1, 0, 1:-1]
+   Yplus = u2[1:-1, -1, 1:-1]
+   Zminus = u2[1:-1, 1:-1, 0]
+   Zplus = u2[1:-1, 1:-1, -1]
 
    #importing electric field
-   ef = np.loadtxt('ef_4_.txt')
-   ef = ef.reshape(ni,nj,nk,3)
-   ef = torch.from_numpy(ef)
-   xt = torch.from_numpy(x)
-   vt = torch.from_numpy(v)
-   x0t = torch.tensor(x0, dtype=float)
-   dht = torch.tensor(dh, dtype=float)
 
+   #ef = np.loadtxt('ef_4_.txt')
+   #ef = ef.reshape(ni,nj,nk,3)
+  # ef = torch.from_numpy(ef)
+   N = 1000
+   Ny = 10
+   L = 100.0
+   Np = 20000
+   Ly = 1.0
+   # Lz = 4
+   # xx = torch.random(N)
+   x0  = torch.zeros(3)
+   dh = torch.Tensor([L/N,Ly/Ny,Ly/Ny])
+
+   xt = torch.Tensor(Np,3)
+   xt[:,0] = torch.from_numpy(L*np.random.random(Np))
+   xt[:,1] = torch.from_numpy(Ly*np.random.random(Np))
+   xt[:,2] = torch.from_numpy(Ly*np.random.random(Np))
+   vt = torch.Tensor(N,3)
+   x0t = torch.tensor(x0.clone().detach())
+   dht = torch.tensor(dh.clone().detach())
+
+   from density import density
+   rho = density(xt,x0,dh,N+2,Ny+2,Ny+2,1.0)
+   phi = solve_poisson3D(u2, rho, Xminus, Xplus, Yminus, Yplus, Zminus, Zplus)
    # PIC(xt, vt, x0t, dht, ef, feat)
 
-   xn,vn = push(xt,vt,x0t,dht,ef,-1.602176565e-19,9.10938215e-31,2e-10)
+   xn,vn = push(xt,vt,x0t,dht,ef,-1.0,1.0,0.1)
    #
    dv,iv_x,iv_y = delta(vn,3,feat)
    dx,ix_x,ix_y = delta(xn,5,feat)
