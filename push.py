@@ -286,6 +286,7 @@ if __name__ == '__main__':
 
    from density import density
    rho = density(xt,x0,dh,N+2,Ny+2,Ny+2,1.0)
+   from solve_poisson3D import solve_poisson3D
    phi = solve_poisson3D(u2, rho, Xminus, Xplus, Yminus, Yplus, Zminus, Zplus)
    # PIC(xt, vt, x0t, dht, ef, feat)
 
