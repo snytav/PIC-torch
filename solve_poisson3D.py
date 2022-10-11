@@ -17,11 +17,11 @@ from laplace3D import laplace3D
 from bounds3D import bounds3D
 import sys
 
-def solve_poisson3D(u2,f,Xminus,Xplus,Yminus,Yplus,Zminus,Zplus):
-    nx,ny,nz = f.shape
+def solve_poisson3D(u2,f_real,Xminus,Xplus,Yminus,Yplus,Zminus,Zplus):
+    nx,ny,nz = f_real.shape
     K3D = poisson_matrix3D(nx,ny,nz)
     #K1D = torch.from_numpy(K1D.A)
-    f_real = np.dot(K3D.A,u2[1:-1,1:-1,1:-1].reshape(nx*ny*nz,1)).reshape(nx,ny,nz)
+    # f_real = np.dot(K3D.A,u2[1:-1,1:-1,1:-1].reshape(nx*ny*nz,1)).reshape(nx,ny,nz)
     f = add_boundary_conditions_to_RHS3D(f,f_real,Xminus,Xplus,Yminus,Yplus,Zminus,Zplus)
     u = np.linalg.solve(K3D.A,f.reshape(f.shape[0]*f.shape[1]*f.shape[2]))
 

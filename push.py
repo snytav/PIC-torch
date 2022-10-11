@@ -278,14 +278,17 @@ if __name__ == '__main__':
 
    xt = torch.Tensor(Np,3)
    xt[:,0] = torch.from_numpy(L*np.random.random(Np))
+   X_from_matlab = np.loadtxt('electron0000000000.txt')
+   xt[:, 0] = torch.from_numpy(X_from_matlab[:Np])
    xt[:,1] = torch.from_numpy(Ly*np.random.random(Np))
    xt[:,2] = torch.from_numpy(Ly*np.random.random(Np))
    vt = torch.Tensor(N,3)
    x0t = torch.tensor(x0.clone().detach())
    dht = torch.tensor(dh.clone().detach())
 
-   from density import density
-   rho = density(xt,x0,dh,N+2,Ny+2,Ny+2,1.0)
+   from density import density,Succi_density
+   # rho = density(xt,x0,dh,N+2,Ny+2,Ny+2,1.0)
+   rho = Succi_density(xt,dh,x0,(N,Ny,Ny))
    from solve_poisson3D import solve_poisson3D
    phi = solve_poisson3D(u2, rho, Xminus, Xplus, Yminus, Yplus, Zminus, Zplus)
    # PIC(xt, vt, x0t, dht, ef, feat)

@@ -35,3 +35,30 @@ def density(xt,x0,dh,Nx,Ny,Nz,value):
 
     return data
 
+import numpy as np
+def Succi_density(x,dx,x0,J):
+    rho = torch.zeros((J[0] + 2, J[1] + 2, J[2] + 2))
+
+    for r in x:
+        js = np.floor(np.divide(r,dx))
+        ys = np.divide(r , dx) - (js - 1)
+        js_plus_1 = np.mod(js, J) + 1
+        i = int(js[0])
+        j = int(js[1])
+        k = int(js[2])
+        i1 = int(js_plus_1[0])
+        j1 = int(js_plus_1[1])
+        k1 = int(js_plus_1[2])
+        d1 = np.divide(1-ys,dx)
+        d  = np.divide(ys,dx)
+        rho[i][j][k]  += d1[0]*d1[1]*d1[2]
+        rho[i1][j][k] += d[0]*d1[1]*d1[2]
+        rho[i][j1][k]  += d1[0] * d[1] * d1[2]
+        rho[i1][j1][k] += d[0] * d[1] * d1[2]
+        rho[i][j][k1]  += d1[0]*d1[1]*d[2]
+        rho[i1][j][k1] += d[0]*d1[1]*d[2]
+        rho[i][j1][k1]  += d1[0] * d[1] * d[2]
+        rho[i1][j1][k1] += d[0] * d[1] * d[2]
+
+    return rho
+
