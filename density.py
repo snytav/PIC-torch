@@ -62,3 +62,8 @@ def Succi_density(x,dx,x0,J):
 
     return rho
 
+
+def make1Dfrom3D(rho):
+    rho2D = torch.sum(rho,1)
+    rho1D = torch.sum(rho2D,1)
+    return rho1D

@@ -286,10 +286,15 @@ if __name__ == '__main__':
    x0t = torch.tensor(x0.clone().detach())
    dht = torch.tensor(dh.clone().detach())
 
-   from density import density,Succi_density
+   from density import density,Succi_density,make1Dfrom3D
+   import matplotlib.pyplot as plt
    # rho = density(xt,x0,dh,N+2,Ny+2,Ny+2,1.0)
    rho = Succi_density(xt,dh,x0,(N,Ny,Ny))
+   rho1D = make1Dfrom3D(rho)
+   plt.figure()
+   plt.plot(rho1D)
    from solve_poisson3D import solve_poisson3D
+
    phi = solve_poisson3D(u2, rho, Xminus, Xplus, Yminus, Yplus, Zminus, Zplus)
    # PIC(xt, vt, x0t, dht, ef, feat)
 
